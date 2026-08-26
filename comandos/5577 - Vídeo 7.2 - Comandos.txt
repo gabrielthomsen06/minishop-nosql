@@ -1,0 +1,30 @@
+
+Vídeo 7.2 - Cassandra integrado ao projeto Minishop
+
+- docker exec -it cassandra-minishop cqlsh       
+
+- USE minishop_metrics;
+
+- DROP TABLE IF EXISTS metric_points_by_day;
+
+- DROP TABLE IF EXISTS counters_snapshot;
+
+- DESCRIBE TABLES;
+
+- EXIT;
+
+- SELECT ts, metric, value, tags
+FROM metric_points_by_day
+WHERE metric = 'counter'
+  AND day = '2026-03-04'
+LIMIT 10;
+
+
+
+
+
+
+
+
+
+

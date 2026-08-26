@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: nosql-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: nosql-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  cassandra:
+    image: cassandra:5
+    container_name: nosql-cassandra
+    restart: unless-stopped
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=NoSQLCluster
+      # Limita o heap da JVM. Sem isso o Cassandra tenta usar uma fração
+      # generosa da RAM do host, o que pesa muito quando os 3 bancos
+      # estao rodando juntos num notebook pessoal.
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=100M
+      # Sem isso, o Cassandra anuncia o IP interno do container aos
+      # clientes (ex: 172.18.0.x), e o driver Python, rodando no host,
+      # trava tentando conectar nesse IP que so existe dentro do Docker.
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=127.0.0.1
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe cluster'"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+
+volumes:
+  mongodb_data:
+  redis_data:
+  cassandra_data:

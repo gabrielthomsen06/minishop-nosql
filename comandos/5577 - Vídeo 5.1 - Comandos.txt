@@ -1,0 +1,201 @@
+// Seleciona o banco de dados.
+// (Narração) Aqui eu estou dizendo para o Playground que os próximos comandos
+// vão ser executados dentro do database "minishop". Isso é como “entrar” no banco.
+
+use("minishop");
+
+// Limpando o ambiente.
+// (Narração) Antes de começar a demo, eu vou zerar a collection para evitar
+// que dados de execuções anteriores influenciem o resultado.
+
+db.events.drop();
+
+// Recriando a collection.
+// (Narração) Depois de remover a collection, eu recrio a estrutura do zero.
+// Assim eu garanto que a collection existe e está pronta para receber os eventos.
+
+db.createCollection("events");
+
+// ***************************************************************************
+
+// Incluindo documentos.
+// (Narração) Agora vamos começar a inserir os eventos da aplicação.
+// Cada evento será representado por um documento no formato JSON.
+
+use("minishop");
+
+// Evento 1: inicialização da aplicação.
+// (Narração) Este primeiro documento representa o momento em que
+// a aplicação MiniShop foi iniciada.
+
+db.events.insertOne({
+  event_type: "APP_STARTED",
+  message: "MiniShop iniciada",
+  user_id: null,
+  session_id: "s-001",
+  created_at: new Date("2026-01-28T10:00:00Z")
+});
+
+// Evento 2: login do usuário.
+// (Narração) Aqui nós registramos o evento de login.
+// Repare que agora o campo user_id já possui um valor,
+// indicando que um usuário foi autenticado.
+
+db.events.insertOne({
+  event_type: "LOGIN",
+  message: "Usuário autenticado",
+  user_id: "u-100",
+  session_id: "s-001",
+  created_at: new Date("2026-01-28T10:02:10Z")
+});
+
+// Evento 3: adição de item ao carrinho.
+// (Narração) Neste terceiro evento, além dos campos que já vimos antes,
+// aparece um novo campo chamado meta.
+// Esse campo é um objeto JSON aninhado, com informações específicas
+// desse tipo de evento, como o SKU do produto e a quantidade.
+
+db.events.insertOne({
+  event_type: "ADD_TO_CART",
+  message: "Adicionou item ao carrinho",
+  user_id: "u-100",
+  session_id: "s-001",
+  created_at: new Date("2026-01-28T10:03:25Z"),
+  meta: { sku: "SKU-001", qty: 2 }
+});
+
+// ***************************************************************************
+
+// Buscar eventos de login
+// (Narração) Aqui fazemos um filtro simples.
+// Estamos pedindo ao MongoDB todos os documentos
+// cujo campo event_type seja igual a LOGIN.
+
+use("minishop");
+
+db.events.find({ event_type: "LOGIN" });
+
+// Eventos relacionados a um SKU específico
+// (Narração) Neste caso, o filtro é feito em um campo aninhado.
+// Usamos a notação de ponto para acessar o campo sku
+// dentro do objeto meta.
+use("minishop");
+
+db.events.find({ "meta.sku": "SKU-001" });
+
+// Buscando mais de um tipo de evento ao mesmo tempo
+// (Narração) Aqui usamos o operador $in.
+// Ele permite buscar documentos cujo valor do campo
+// esteja dentro de uma lista de valores.
+use("minishop");
+
+db.events.find({
+  event_type: { $in: ["LOGIN", "ADD_TO_CART"] }
+});
+
+// Combinando filtros
+// (Narração) Quando colocamos mais de um campo no filtro,
+// o MongoDB aplica automaticamente um AND lógico.
+// Ou seja, ambos os critérios precisam ser verdadeiros.
+
+use("minishop");
+
+db.events.find({
+  user_id: "u-100",
+  event_type: "ADD_TO_CART"
+});
+
+// Filtrando eventos por período de tempo
+// (Narração) Aqui filtramos os eventos com base
+// em um intervalo de datas.
+// Usamos $gte para "maior ou igual" e $lte para "menor ou igual".
+
+use("minishop");
+
+db.events.find({
+  created_at: {
+    $gte: new Date("2026-01-28T10:02:00Z"),
+    $lte: new Date("2026-01-28T10:04:00Z")
+  }
+});
+
+// Listando eventos ordenando pelo tempo
+// (Narração) Agora listamos todos os eventos
+// ordenados pelo campo created_at.
+// O valor -1 indica ordenação decrescente,
+// do mais recente para o mais antigo.
+
+use("minishop");
+
+db.events.find().sort({ created_at: -1 });
+
+// Listar campos relevantes
+// (Narração) Neste último exemplo usamos projeção.
+// Estamos dizendo quais campos queremos ver no resultado,
+// deixando a visualização mais limpa e focada em logs.
+
+use("minishop");
+
+db.events.find(
+  {},
+  {
+    event_type: 1,
+    message: 1,
+    user_id: 1,
+    created_at: 1
+  }
+);
+
+
+// ***************************************************************************
+
+// Atualizar um documento.
+// (Narração) Agora vamos atualizar um único documento específico.
+// Para isso, usamos o método updateOne, que altera apenas o primeiro
+// documento que corresponder ao filtro informado.
+// (Narração) Aqui usamos o campo _id para identificar exatamente
+// qual documento deve ser atualizado.
+// O ObjectId garante que estamos apontando para um documento único.
+// (Narração) O operador $set indica quais campos devem ser criados
+// ou atualizados dentro do documento.
+// Neste caso, estamos adicionando o campo status com o valor confirmed.
+
+use("minishop");
+
+db.events.updateOne(
+  { _id: ObjectId("697abbe90565f31c96052380") },
+  { $set: { status: "confirmed" } }
+);
+
+// (Narração) Após o update, fazemos uma consulta para verificar
+// o resultado da alteração nos eventos de ADD_TO_CART.
+
+db.events.find({ event_type: "ADD_TO_CART" });
+
+// Atualizar vários documentos.
+// (Narração) Agora vamos atualizar vários documentos de uma só vez.
+// Para isso usamos o método updateMany, que aplica a alteração
+// em todos os documentos que atendem ao filtro.
+// (Narração) O operador $set é usado novamente,
+// agora para adicionar a tag de sessão em vários documentos.
+// (Narração) O filtro seleciona todos os eventos
+// que pertencem à sessão s-001.
+
+use("minishop");
+
+db.events.updateMany(
+  { session_id: "s-001" },
+  { $set: { session_tag: "aula-4-3" } }
+);
+
+// Apagando documentos.
+// (Narração) Por fim, vamos remover documentos do banco.
+// O deleteMany apaga todos os documentos que correspondem ao filtro informado.
+// (Narração) Aqui estamos removendo todos os eventos
+// do tipo APP_STARTED, simulando uma limpeza de logs antigos.
+
+use("minishop");
+
+db.events.deleteMany(
+  { event_type: "APP_STARTED" }
+);

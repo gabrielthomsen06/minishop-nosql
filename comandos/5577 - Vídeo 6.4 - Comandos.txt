@@ -1,0 +1,44 @@
+Vídeo 6.4 – Modelagem de Séries Temporais no Cassandra 
+
+- CREATE TABLE IF NOT EXISTS metric_points_by_day (
+  metric text,
+  day date,
+  ts timestamp,
+  value double,
+  tags map<text, text>,
+  PRIMARY KEY ((metric, day), ts)
+) WITH CLUSTERING ORDER BY (ts DESC);
+
+- INSERT INTO metric_points_by_day 
+(metric, day, ts, value, tags)
+VALUES ('counter', '2026-02-02', 
+toTimestamp(now()), 1, {'name':'logins'});
+
+- INSERT INTO metric_points_by_day (metric, day, ts, value, tags)
+VALUES ('latency_ms', '2026-02-02', toTimestamp(now()), 150.44, {'op':'view_catalog'});
+
+- INSERT INTO metric_points_by_day (metric, day, ts, value, tags)
+VALUES ('counter', '2026-02-02', toTimestamp(now()), 1, {'name':'catalog_views'});
+
+- SELECT ts, metric, value, tags
+FROM metric_points_by_day
+WHERE metric = 'counter'
+  AND day = '2026-02-02'
+LIMIT 10;
+
+- CREATE TABLE IF NOT EXISTS counters_snapshot (
+  name text PRIMARY KEY,
+  value bigint,
+  updated_at timestamp
+);
+`
+- INSERT INTO counters_snapshot (name, value, updated_at)
+VALUES ('logins', 1, toTimestamp(now()));
+
+- INSERT INTO counters_snapshot (name, value, updated_at)
+VALUES ('catalog_views', 1, toTimestamp(now()));
+
+- SELECT * FROM counters_snapshot;
+
+
+

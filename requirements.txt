@@ -1,0 +1,14 @@
+pymongo==4.9.2
+redis==5.2.0
+
+# IMPORTANTE: este projeto exige Python 3.12, nao 3.13.
+# No 3.13 (Windows) o cassandra-driver nao tem wheel e nao compila, e o
+# fork scylla-driver instala mas derruba o processo no connect()
+# (STATUS_STACK_BUFFER_OVERRUN). No 3.12 o driver oficial tem wheel pronto.
+cassandra-driver==3.29.2
+
+# No Windows o wheel do cassandra-driver nao traz a extensao libev, entao
+# ele recorre ao modulo asyncore, que foi removido do Python no 3.12.
+# pyasyncore devolve esse modulo, e o driver volta a funcionar sem que
+# nenhum script do curso precise ser alterado.
+pyasyncore==1.0.4

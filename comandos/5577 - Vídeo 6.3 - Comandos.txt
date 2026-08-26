@@ -1,0 +1,31 @@
+Vídeo 6.3 – Introdução ao CQL: Criando Keyspaces e Tabelas no Cassandra
+
+- docker exec -it cassandra-minishop cqlsh
+
+- DESCRIBE KEYSPACES;
+
+- CREATE KEYSPACE minishop_plataform
+WITH replication = {
+  'class': 'SimpleStrategy',
+  'replication_factor': 1
+};
+
+- DESCRIBE KEYSPACES;
+
+- USE  minishop_plataform;
+
+- CREATE TABLE simple_metrics (
+  metric_name text,
+  metric_time timestamp,
+  metric_value int,
+  PRIMARY KEY (metric_name, metric_time)
+);
+
+- INSERT INTO simple_metrics (metric_name, metric_time, metric_value) VALUES ('page_views', toTimestamp(now()), 120);
+
+- INSERT INTO simple_metrics (metric_name, metric_time, metric_value) VALUES ('page_views', toTimestamp(now()), 135);
+
+- INSERT INTO simple_metrics (metric_name, metric_time, metric_value) VALUES ('orders_created', toTimestamp(now()), 5);
+
+- SELECT * FROM simple_metrics WHERE metric_name = 'page_views';
+
