@@ -7,9 +7,7 @@ from core.ports import Event, EventStore
 
 
 def get_db():
-    client = MongoClient(
-        "mongodb+srv://root:root@cluster0.lgjfzis.mongodb.net/"
-    )
+    client = MongoClient("mongodb://localhost:27017/")
     db = client["minishop"]
 
     db.events.create_index([("session_id", ASCENDING), ("ts", DESCENDING)])

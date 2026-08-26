@@ -3,7 +3,5 @@ from bson import ObjectId
 from datetime import datetime
 
 def get_db():
-    client = MongoClient(
-        "mongodb+srv://root:root@cluster0.lgjfzis.mongodb.net/"
-    )
+    client = MongoClient("mongodb://localhost:27017/")
     return client["minishop"]

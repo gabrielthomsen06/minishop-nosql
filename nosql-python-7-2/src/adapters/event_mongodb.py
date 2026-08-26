@@ -10,9 +10,7 @@ from core.util import utcnow
 
 
 def get_db():
-    client = MongoClient(
-        "mongodb+srv://root:root@cluster0.jtw3dfe.mongodb.net/"
-    )
+    client = MongoClient("mongodb://localhost:27017/")
     db = client["minishop"]
 
     db.events.create_index([("session_id", ASCENDING), ("ts", DESCENDING)])
