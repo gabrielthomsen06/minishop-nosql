@@ -12,8 +12,8 @@ def main():
     # reset_collection(db)
     # insert_events(db)
     # run_queries(db)
-    # update_events(db)
-    # delete_events(db)
+    update_events(db)
+    delete_events(db)
 
 
 if __name__ == "__main__":
