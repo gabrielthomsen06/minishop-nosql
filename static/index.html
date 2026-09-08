@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MiniShop NoSQL</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      MiniShop <span class="muted">NoSQL</span>
+    </div>
+    <div id="userBox" class="userbox hidden">
+      <span id="userLabel"></span>
+      <button id="logoutBtn" class="btn btn-ghost">Sair</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- LOGIN -->
+    <section id="loginView" class="card login-card">
+      <h1>Entrar</h1>
+      <p class="muted">Informe um usuário para criar (ou retomar) sua sessão no Redis.</p>
+      <form id="loginForm">
+        <input id="userIdInput" type="text" placeholder="ex: u123" value="u123" required />
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <p id="loginError" class="error hidden"></p>
+    </section>
+
+    <!-- APP -->
+    <div id="appView" class="hidden">
+      <nav class="tabs">
+        <button class="tab active" data-tab="catalog">Catálogo</button>
+        <button class="tab" data-tab="search">Buscar</button>
+        <button class="tab" data-tab="cart">Carrinho <span id="cartBadge" class="badge hidden">0</span></button>
+        <button class="tab" data-tab="events">Eventos</button>
+        <button class="tab" data-tab="metrics">Métricas</button>
+      </nav>
+
+      <section id="tab-catalog" class="tab-panel active">
+        <h2>Catálogo</h2>
+        <div id="catalogGrid" class="grid"></div>
+      </section>
+
+      <section id="tab-search" class="tab-panel">
+        <h2>Buscar produto</h2>
+        <form id="searchForm" class="inline-form">
+          <input id="searchInput" type="text" placeholder="nome, categoria ou SKU" />
+          <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+        <div id="searchGrid" class="grid"></div>
+      </section>
+
+      <section id="tab-cart" class="tab-panel">
+        <h2>Carrinho</h2>
+        <div id="cartTableWrap"></div>
+        <div class="cart-footer">
+          <div class="total">Total: <strong id="cartTotal">€ 0,00</strong></div>
+          <button id="checkoutBtn" class="btn btn-primary">Finalizar compra</button>
+        </div>
+        <p id="checkoutMsg" class="success hidden"></p>
+      </section>
+
+      <section id="tab-events" class="tab-panel">
+        <h2>Eventos recentes <span class="muted">(MongoDB)</span></h2>
+        <button id="refreshEvents" class="btn btn-ghost">Atualizar</button>
+        <div id="eventsList" class="list"></div>
+      </section>
+
+      <section id="tab-metrics" class="tab-panel">
+        <h2>Métricas &amp; contadores <span class="muted">(Cassandra)</span></h2>
+        <button id="refreshMetrics" class="btn btn-ghost">Atualizar</button>
+        <h3>Contadores</h3>
+        <div id="countersGrid" class="grid stats"></div>
+        <h3>Últimos pontos</h3>
+        <div id="pointsList" class="list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
